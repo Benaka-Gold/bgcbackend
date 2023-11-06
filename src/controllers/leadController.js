@@ -31,6 +31,8 @@ exports.getLeads = async (req, res) => {
 
 exports.getLeadsByTeam = async (req,res) => {
   try {
+    console.log(req.body.teamId)
+
     const leads = await leadService.getLeadsByTeam(req.body.teamId);
     res.status(200).json({success : true,data : leads});
   }

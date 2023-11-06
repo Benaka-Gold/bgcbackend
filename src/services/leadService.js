@@ -16,15 +16,14 @@ const getLeads = async () => {
       .sort({ createdAt: 1 });
     return leads;
   } catch (error) {
-    console.error(error);
     throw error;
   }
 };
 
-const getLeadsByTeam = async ({ query }) => {
+const getLeadsByTeam = async (teamId) => {
   try {
     // Assuming `query.teamId` specifies the team you are interested in
-    const leads = await Lead.find({ assignedTeam: query.teamId }).sort({createdAt : 1});
+    const leads = await Lead.find({ assignedTeam: teamId }).sort({createdAt : 1});
     return leads;
   } catch (error) {
     throw error;  // Optionally re-throw the error if you want to handle it at a higher level
@@ -33,11 +32,10 @@ const getLeadsByTeam = async ({ query }) => {
 
 const getFreshLeads = async(teamId) => {
   try { 
-    console.log(teamId)
     const leads = await Lead.find({
       assignedTo: { $in: [null, undefined] },
       assignedTeam: teamId,
-      moveLead: {$in : [null,undefined]}
+      moveLead: {$in : [null,undefined,false]}
     }).sort({ createdAt: -1 });
     return leads;
   }
@@ -49,7 +47,14 @@ const getFreshLeads = async(teamId) => {
 
 const getLeadByUser = async(userId) => {
   try { 
-    const leads = await Lead.find({assignedTo : userId}).sort({createdAt : 1});
+    const leads = await Lead.find({
+      assignedTo: userId,
+      moveLead: { $in: [false, null, undefined] }
+    })
+    .sort({ createdAt: 1 })
+    .populate('moveTo', 'name')
+    .populate('assignedTeam', 'name');
+
     return leads;
   }
   catch (error){
@@ -63,7 +68,7 @@ const getLeadById = async (id) => {
 
 const getMoveLeads = async() => {
   try { 
-    return await Lead.find({moveLead : true}).populate('moveTo')
+    return await Lead.find({moveLead : true}).populate('moveTo','name').populate('assignedTeam','name')
   }
   catch (error){
     throw error;

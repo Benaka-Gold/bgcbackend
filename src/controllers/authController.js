@@ -3,14 +3,25 @@ const jwt = require('jsonwebtoken');
 const passport = require('passport');
 const { generateOtp } = require('../services/otpService');
 const userService = require('../services/userService')
-
+const axios = require('axios')
 exports.login = async (req, res, next) => {
   try {
     const user = await userService.getUserByPhone(req.body.phoneNumber);
     console.log(user)
     if(user !== null){
         const otp = await generateOtp(req.body.phoneNumber);
-        res.status(200).json({ success: true, message: 'OTP sent successfully.',otp : otp} );
+        axios.get(
+          `https://pgapi.vispl.in/fe/api/v1/send?username=benakagold.trans&password=hhwGK&unicode=false&from=BENGLD&to=${user.phoneNumber}&text=Hi.%20Your%20One%20Time%20Password%20to%20login%20Benaka%20Gold%20Company%20is%20${otp}.%20This%20OTP%20is%20valid%20for%205%20minutes%20only.&dltContentId=1707168542360758659`
+
+        ).then(data => {
+          if(data.data.statusCode === 200){
+            res.status(200).json({ success: true, message: 'OTP sent successfully.'} );
+          }
+          else {
+            res.status(401).json({success : false,message : "OTP Not successfull"})
+          }
+        })
+
     }
     else {
         res.status(404).json({success : false,message : "User not found"})

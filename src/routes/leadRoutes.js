@@ -185,7 +185,7 @@ router.put('/lead/update/:id', ensureAuthenticated, checkRole(['MD', 'HR','admin
  *         description: Internal Server Error
  */
 
-router.get('/lead/getFreshLeads/:teamId',ensureAuthenticated,checkRole(['MD','HR','admini','Telecaller']),leadController.getFreshLeads)
+router.get('/lead/getFreshLeads/:teamId',ensureAuthenticated,checkRole(['MD','HR','admin','Telecaller']),leadController.getFreshLeads)
 
 
 router.get('/lead/getMoveLeads',ensureAuthenticated,checkRole(['HR','admin']),leadController.getMoveLeads)
