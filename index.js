@@ -15,6 +15,8 @@ const userRoutes = require('./src/routes/userRoutes')
 const leadRoutes = require('./src/routes/leadRoutes')
 const teamTypeRoutes = require('./src/routes/teamTypeRoutes')
 const teamRoutes = require('./src/routes/teamRoutes')
+const employeeRoutes = require('./src/routes/employeeRoutes')
+const fileRoutes = require('./src/routes/fileRoutes')
 
 connectDB()
 app.use(bodyParser.json());
@@ -27,6 +29,9 @@ app.use('/api/v1',userRoutes);
 app.use('/api/v1',leadRoutes);
 app.use('/api/v1',teamTypeRoutes);
 app.use('/api/v1',teamRoutes);
+app.use('/api/v1',employeeRoutes);
+app.use('/api/v1',fileRoutes);
+
 
 app.listen(4000, () => {
   console.log('Server is running on port 4000');

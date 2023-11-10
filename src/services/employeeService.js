@@ -18,7 +18,8 @@ exports.createEmployee = async (employeeData, createUser, userRole, teamId) => {
       const user = new User({
         empId: employeeData.empCode,
         phoneNumber: employeeData.phoneNumber,
-        role: userRole  // use the role sent from frontend
+        role: userRole,  // use the role sent from frontend
+        teamId : teamId
       });
       await user.save({ session });
       userId = user._id;
@@ -33,7 +34,7 @@ exports.createEmployee = async (employeeData, createUser, userRole, teamId) => {
 
     // Update the team members if a team ID is provided
     if (teamId) {
-      await addMembers(teamId, employee._id);
+      await addMembers(teamId, userId);
     }
 
     // Commit the transaction

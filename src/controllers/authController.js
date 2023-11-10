@@ -3,7 +3,9 @@ const jwt = require('jsonwebtoken');
 const passport = require('passport');
 const { generateOtp } = require('../services/otpService');
 const userService = require('../services/userService')
-const axios = require('axios')
+const axios = require('axios');
+const Team = require('../database/models/Team');
+const { getTeamById } = require('../services/teamService');
 exports.login = async (req, res, next) => {
   try {
     const user = await userService.getUserByPhone(req.body.phoneNumber);
@@ -33,20 +35,27 @@ exports.login = async (req, res, next) => {
   }
 };
 
-exports.verifyLogin = (req, res, next) => {
-  passport.authenticate('local', { session: false }, (err, user, info) => {
+exports.verifyLogin =  (req, res, next) => {
+  passport.authenticate('local', { session: false }, async (err, user, info) => {
     if (err || !user) {
       return res.status(400).json({
         message: info ? info.message : 'Login failed',
         user: user
       });
     }
-    req.login(user, { session: false }, (err) => {
+    req.login(user, { session: false }, async (err) => {
       if (err) {
         res.send(err);
       }
+      let teamMembers;
+      if(user.teamId){
+        const team = await getTeamById(user.teamId)
+        teamMembers = team.members.filter(item => {
+          return item._id.toString() === user._id.toString();
+        })
+      }
       const token = jwt.sign(user.toJSON(), process.env.JWT_SECRET, {expiresIn : '6d'});
-      return res.json({ user, token });
+      return res.json({ user, token, teamMembers });
     });
   })(req, res);
 };

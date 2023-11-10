@@ -4,15 +4,15 @@ const aws = require('aws-sdk');
 const fs = require('fs');
 const path = require('path');
 
-aws.config.update({/* your AWS S3 config */});
+aws.config.update({/* your AWS S3 config */ });
 const s3 = new aws.S3();
 
 exports.uploadFile = async (file, useS3 = false) => {
   const newFile = new FileUpload({
-    fileName: file.name,
+    fileName: file.originalname, // Changed from file.filename to file.originalname
     fileType: file.mimetype,
-    localFilePath: useS3 ? null : path.join(__dirname, '../../uploads', file.name),
-    s3FilePath: useS3 ? `s3://your-bucket/${file.name}` : null
+    localFilePath: useS3 ? null : file.path,
+    s3FilePath: useS3 ? `s3://your-bucket/${file.originalname}` : null // Changed file.name to file.originalname
   });
 
   if (useS3) {
@@ -23,7 +23,8 @@ exports.uploadFile = async (file, useS3 = false) => {
     };
     await s3.upload(params).promise();
   } else {
-    fs.copyFile(file.path, path.join(__dirname, '../../uploads', file.name), (err) => {
+    const localPath = path.join(__dirname, '../../uploads', file.originalname);
+    fs.copyFile(file.path, localPath, (err) => {
       if (err) throw err;
     });
   }
@@ -93,7 +94,7 @@ exports.updateFile = async (fileId, newFile, useS3 = false) => {
     });
   }
 
-  
+
   file.fileName = newFile.name;
   file.fileType = newFile.mimetype;
   file.localFilePath = useS3 ? null : path.join(__dirname, '../../uploads', newFile.name);

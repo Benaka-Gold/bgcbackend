@@ -30,6 +30,10 @@ const employeeSchema = new Schema({
         unique: true,
         trim: true
     },
+    fatherName: {
+        type : String,
+        required : false
+    },
     dateOfBirth: {
         type: Date,
         required: true

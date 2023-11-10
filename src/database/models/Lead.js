@@ -45,6 +45,10 @@ const leadSchema = new mongoose.Schema({
     required: function() {
       return this.moveLead;  // required if moveLead is true
     }
+  },
+  source : {
+    type : String,
+    required : true
   }
   
 }, {

@@ -113,7 +113,7 @@ const { ensureAuthenticated, checkRole } = require('../middleware/authMiddleware
  *             schema:
  *               $ref: '#/components/schemas/Employee'
  */
-router.post('/', ensureAuthenticated, checkRole(['MD', 'HR']), employeeController.createEmployee);
+router.post('/employee', ensureAuthenticated, checkRole(['MD', 'HR','admin']), employeeController.createEmployee);
 
 /**
  * @swagger
@@ -153,7 +153,7 @@ router.get('/employees', ensureAuthenticated, checkRole(['MD', 'HR', 'admin']), 
  *             schema:
  *               $ref: '#/components/schemas/Employee'
  */
-router.get('/:id', ensureAuthenticated, checkRole(['MD', 'HR', 'admin']), employeeController.getEmployee);
+router.get('/employee/:id', ensureAuthenticated, checkRole(['MD', 'HR', 'admin']), employeeController.getEmployee);
 
 /**
  * @swagger
@@ -181,7 +181,7 @@ router.get('/:id', ensureAuthenticated, checkRole(['MD', 'HR', 'admin']), employ
  *             schema:
  *               $ref: '#/components/schemas/Employee'
  */
-router.put('/:id', ensureAuthenticated, checkRole(['MD', 'HR']), employeeController.updateEmployee);
+router.put('/employee/:id', ensureAuthenticated, checkRole(['MD', 'HR','admin']), employeeController.updateEmployee);
 
 /**
  * @swagger

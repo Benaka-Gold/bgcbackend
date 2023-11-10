@@ -23,7 +23,9 @@ const getLeads = async () => {
 const getLeadsByTeam = async (teamId) => {
   try {
     // Assuming `query.teamId` specifies the team you are interested in
-    const leads = await Lead.find({ assignedTeam: teamId }).sort({createdAt : 1});
+    const leads = await Lead.find({ assignedTeam: teamId })
+    .populate('assignedTo','name')
+    .sort({createdAt : 1});
     return leads;
   } catch (error) {
     throw error;  // Optionally re-throw the error if you want to handle it at a higher level

@@ -59,7 +59,7 @@ router.get('/teams', ensureAuthenticated, checkRole(['MD', 'HR','admin','Telecal
  *             schema:
  *               $ref: '#/components/schemas/Team'
  */
-router.get('/team/:id', ensureAuthenticated, checkRole(['MD', 'HR','admin']), teamController.getTeamById);
+router.get('/team/:id', ensureAuthenticated, checkRole(['MD', 'HR','admin','Telecaller']), teamController.getTeamById);
 
 /**
  * @swagger

@@ -9,7 +9,6 @@ const fileUploadSchema = new mongoose.Schema({
   localFilePath: String,
   s3FilePath: String,
   fileType: String,
-  uploadDate: { type: Date, default: Date.now }
 },{timestamps : true});
 
 module.exports = mongoose.model('FileUpload', fileUploadSchema);
