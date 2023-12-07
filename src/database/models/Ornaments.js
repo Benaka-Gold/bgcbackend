@@ -8,7 +8,7 @@ const ornamentSchema = new Schema({
   netWeight: Number,
   billAvailable: Boolean,
   image: { type: Schema.Types.ObjectId, ref: 'FileUpload' },
-  imageBill : {type : Schema.Types.ObjectId,ref : 'FileUpload'}
+  BillImage : {type : Schema.Types.ObjectId,ref : 'FileUpload'}
 });
 
 module.exports = mongoose.model('Ornament', ornamentSchema);

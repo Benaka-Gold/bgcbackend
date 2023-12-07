@@ -60,7 +60,7 @@ const upload = multer({ dest: 'uploads/' });
  *       500:
  *         description: Internal Server Error.
  */
-router.post('/upload',ensureAuthenticated,checkRole(['MD','HR','admin','operations']), upload.single('file'), fileController.uploadFileController);
+router.post('/upload',ensureAuthenticated,checkRole(['MD','HR','admin','operations','executive']), upload.single('file'), fileController.uploadFileController);
 
 /**
  * @swagger
@@ -95,11 +95,11 @@ router.post('/upload',ensureAuthenticated,checkRole(['MD','HR','admin','operatio
  *         description: Internal Server Error.
  * 
  */
-router.get('/download/:fileId',ensureAuthenticated,checkRole(['MD','HR','admin','operations']), fileController.downloadFileController);
+router.get('/download/:fileId',ensureAuthenticated,checkRole(['MD','HR','admin','operations', 'executive']), fileController.downloadFileController);
 
 /**
  * @swagger
- * /delete/{fileId}:
+ * /file/{fileId}:
  *   delete:
  *     summary: Delete a file by its ID
  *     tags: [File Operations]
@@ -125,7 +125,7 @@ router.get('/download/:fileId',ensureAuthenticated,checkRole(['MD','HR','admin',
  *         description: Internal Server Error.
  * 
  */
-router.delete('/delete/:fileId',ensureAuthenticated,checkRole(['MD','HR','admin','operations']), fileController.deleteFileController);
+router.delete('/file/:fileId',ensureAuthenticated,checkRole(['MD','HR','admin','operations', 'executive']), fileController.deleteFileController);
 
 /**
  * @swagger
@@ -186,7 +186,7 @@ router.get('/files', fileController.listFilesController);
  *         description: Internal Server Error.
  * 
  */
-router.put('/update/:fileId',ensureAuthenticated,checkRole(['MD','HR','admin','operations']), upload.single('file'), fileController.updateFileController);
+router.put('/update/:fileId',ensureAuthenticated,checkRole(['MD','HR','admin','operations','executive']), upload.single('file'), fileController.updateFileController);
 
 /**
  * @swagger

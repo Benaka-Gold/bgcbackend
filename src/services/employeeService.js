@@ -51,9 +51,9 @@ exports.createEmployee = async (employeeData, createUser, userRole, teamId) => {
   }
 };
 
-exports.getEmployee = async (empId) => {
+exports.getEmployee = async (id) => {
     try {
-      const employee = await Employee.findOne({ empCode: empId }).populate('userId').populate('documents.docFile');
+      const employee = await Employee.findById(id).populate('userId').populate('documents.docFile');
       return employee;
     } catch (error) {
       throw error;
@@ -62,7 +62,7 @@ exports.getEmployee = async (empId) => {
 
   exports.getEmployees = async()=>{
     try{
-        const employees = await Employee.find()
+        const employees = await Employee.find().select({'firstName' : 1,'lastName' : 1,'empCode' : 1,'phoneNumber' : 1,"email" : 1})
         return employees
     }
     catch(error){

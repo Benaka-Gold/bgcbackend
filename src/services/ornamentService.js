@@ -1,4 +1,5 @@
-const Ornament = require('../database/models/Ornament');
+const Ornament = require('../database/models/Ornaments');
+const fileService = require('./FileUploadService')
 
 const createOrnament = async (data) => {
   const ornament = new Ornament(data);
@@ -19,6 +20,17 @@ const updateOrnament = async (id, data) => {
 };
 
 const deleteOrnament = async (id) => {
+  const ornament = await Ornament.findById(id);
+  if(ornament.image){
+    try {
+      await fileService.deleteFile(ornament.image)
+    } catch(error) {
+      console.error(error)
+    }
+  }
+  if(ornament.billAvailable){
+    await fileService.deleteFile(ornament.BillImage)
+  }
   return await Ornament.findByIdAndDelete(id);
 };
 

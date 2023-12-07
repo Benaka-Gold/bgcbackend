@@ -68,7 +68,8 @@ const employeeSchema = new Schema({
     userId: {
         type : Schema.Types.ObjectId,
         ref : 'User'
-    }
+    },
+    division : String,
 },{timestamps : true});
 
 module.exports = mongoose.model('Employee', employeeSchema);

@@ -26,7 +26,7 @@ async function createEmployee(req, res) {
 
 async function getEmployee(req, res) {
   try {
-    const employee = await employeeService.getEmployee(req.params.empId);
+    const employee = await employeeService.getEmployee(req.params.id);
     res.status(200).json({sucess:true,data : employee});
   } catch (error) {
     res.status(404).json({success : false, error: error.message });

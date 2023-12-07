@@ -1,5 +1,5 @@
 // src/services/userService.js
-const User = require('../database/models/User');
+const User = require("../database/models/User");
 
 const createUser = async (userData) => {
   const user = new User(userData);
@@ -13,14 +13,14 @@ const getUserByEmpId = async (empId) => {
 };
 
 const getUserByPhone = async (phoneNumber) => {
-  const user = await User.findOne({phoneNumber : String(phoneNumber)})
+  const user = await User.findOne({ phoneNumber: String(phoneNumber) });
   return user;
-}
+};
 
-const getUsersByTeam = async(teamId) => {
-  const users = await User.find({teamId  : teamId})
+const getUsersByTeam = async (teamId) => {
+  const users = await User.find({ teamId: teamId });
   return users;
-}
+};
 const updateUserByEmpId = async (empId, updatedData) => {
   const user = await User.findOneAndUpdate(
     { empId: empId.toUpperCase() },
@@ -28,6 +28,15 @@ const updateUserByEmpId = async (empId, updatedData) => {
     { new: true, runValidators: true }
   );
   return user;
+};
+
+const getUserByRole = async (role) => {
+  try {
+    const users = await User.find({ role: role });
+    return users;
+  } catch (error) {
+    throw error;
+  }
 };
 
 const deleteUserByEmpId = async (empId) => {
@@ -41,5 +50,6 @@ module.exports = {
   updateUserByEmpId,
   deleteUserByEmpId,
   getUserByPhone,
-  getUsersByTeam
+  getUsersByTeam,
+  getUserByRole
 };

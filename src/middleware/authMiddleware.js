@@ -22,7 +22,6 @@ const checkRole = (roles) => (req, res, next) => {
       const token = authHeader.split(' ')[1];
       try {
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-        console.log(roles.includes(decodedToken.role))
         if (!roles.includes(decodedToken.role)) {
           return res.status(403).json({ error: 'You do not have permission to access this resource' });
         }

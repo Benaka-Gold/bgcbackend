@@ -49,6 +49,16 @@ const leadSchema = new mongoose.Schema({
   source : {
     type : String,
     required : true
+  },
+  taskId : {
+    type : mongoose.Schema.Types.ObjectId,
+    ref : 'Task',
+    default : null
+  },
+  division : {
+    type : mongoose.Schema.Types.ObjectId,
+    ref : 'Division',
+    default : null
   }
   
 }, {

@@ -163,12 +163,27 @@ module.exports = router;
 * @swagger
 * components:
 *  schemas:
+*    BankDetails:
+*      type: object
+*      properties:
+*        bankName:
+*          type: string
+*        accountHolderName:
+*          type: string
+*        ifscMicr:
+*          type: string
+*        branch:
+*          type: string
+*        accountType:
+*          type: string
+
 *    Customer:
 *      type: object
 *      required:
 *        - name
 *        - phoneNumber
 *        - employmentStatus
+*        - organizationStatus
 *        - annualIncome
 *        - detailsOfJewellery
 *        - natureOfOrnaments
@@ -186,6 +201,10 @@ module.exports = router;
 *        landline:
 *          type: string
 *          nullable: true
+*        altPhone:
+*          type: string
+*        officePhone:
+*          type: string
 *        email:
 *          type: string
 *          format: email
@@ -206,9 +225,9 @@ module.exports = router;
 *          enum: [Used, Bullion, Gold Coin, Others]
 *        totalNumberOfOrnaments:
 *          type: integer
-*        jewelleryBoughtFrom:
+*        jewelleryDetails:
 *          type: string
-*        dateOfPurchase:
+*        dateOfPurchaseOrPledge:
 *          type: string
 *          format: date
 *        gender:
@@ -219,9 +238,6 @@ module.exports = router;
 *          enum: [Married, Single, Divorced, Widowed]
 *        currentAddress:
 *          type: string
-*        permanentAddress:
-*          type: string
-*          nullable: true
 *        officeBusinessAddress:
 *          type: string
 *          nullable: true
@@ -229,30 +245,18 @@ module.exports = router;
 *          type: string
 *        panDetails:
 *          type: string
-*        passportNo:
-*          type: string
-*          nullable: true
 *        idProof:
 *          type: string
-*          format: binary
+*          nullable: true # Assuming this is an ID reference to a FileUpload
 *        idProofNumber:
 *          type: string
 *        addressProof:
 *          type: string
-*          format: binary
+*          nullable: true # Assuming this is an ID reference to a FileUpload
 *        addressProofNumber:
 *          type: string
 *        bankDetails:
-*          type: object
-*          properties:
-*            bankName:
-*              type: string
-*            accountHolderName:
-*              type: string
-*            ifscCode:
-*              type: string
-*            branch:
-*              type: string
+*          $ref: '#/components/schemas/BankDetails'
 *        source:
 *          type: string
 *        verificationRequired:
@@ -267,20 +271,16 @@ module.exports = router;
 *          nullable: true
 *        authorizationLetter:
 *          type: string
-*          format: binary
-*          nullable: true
+*          nullable: true # Assuming this is an ID reference to a FileUpload
 *        noc:
 *          type: string
-*          format: binary
-*          nullable: true
+*          nullable: true # Assuming this is an ID reference to a FileUpload
 *        agreementOfPurchase:
 *          type: string
-*          format: binary
-*          nullable: true
-*        offerLetter:
-*          type: string
-*          format: binary
-*          nullable: true
+*          nullable: true # Assuming this is an ID reference to a FileUpload
+*        offerLetterOwnershipDeclaration:
+*         type: string
+*         nullable: true # Assuming this is an ID reference to a FileUpload
 *        otpVerification:
 *          type: boolean
- */
+*/

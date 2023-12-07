@@ -3,7 +3,7 @@ const ornamentService = require('../services/ornamentService');
 const createOrnament = async (req, res) => {
   try {
     const ornament = await ornamentService.createOrnament(req.body);
-    res.status(201).json(ornament);
+    res.status(200).json(ornament);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

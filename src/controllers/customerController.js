@@ -33,6 +33,7 @@ exports.getCustomerById = async (req, res) => {
 };
 
 exports.updateCustomer = async (req, res) => {
+  
   try {
     const customer = await customerService.updateCustomer(req.params.id, req.body);
     if (!customer) {

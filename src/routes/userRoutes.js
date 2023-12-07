@@ -6,7 +6,7 @@ const userController = require('../controllers/userController')
 const {ensureAuthenticated} = require('../middleware/authMiddleware')
 
 
-router.post('/user/create',userController.createUser)
+router.post('/user/create',ensureAuthenticated,userController.createUser)
 /**
  * @swagger
  * /api/v1/users/{teamId}:
@@ -38,5 +38,7 @@ router.post('/user/create',userController.createUser)
 router.get('/users/:teamId',ensureAuthenticated,userController.getUsersByTeam)
 
 router.get('/user/getUserData',ensureAuthenticated,(req,res)=>{res.status(200).json(req.user)})
+
+router.get('/user/:role',ensureAuthenticated,userController.getUserByRole)
 
 module.exports = router;

@@ -1,6 +1,6 @@
 // src/services/customerService.js
 const Customer = require('../database/models/Customer');
-const Ornament = require('../database/models/Ornament'); // Assuming you have an Ornament model
+// const Ornament = require('../database/models/Ornament'); 
 
 exports.createCustomer = async (customerData) => {
   const customer = new Customer(customerData);
