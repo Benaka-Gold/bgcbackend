@@ -199,6 +199,6 @@ router.put('/employee/:id', ensureAuthenticated, checkRole(['MD', 'HR','admin'])
  *       200:
  *         description: Successfully deleted
  */
-router.delete('/:id', ensureAuthenticated, checkRole(['MD', 'HR']), employeeController.deleteEmployee);
+router.delete('/employee/:id', ensureAuthenticated, checkRole(['MD', 'HR','admin']), employeeController.deleteEmployee);
 
 module.exports = router;

@@ -52,7 +52,6 @@ const employeeSchema = new Schema({
     documents: [{
         docType: {
             type: String,
-            required: true
         },
         docFile: {
             type: Schema.Types.ObjectId,
@@ -70,6 +69,7 @@ const employeeSchema = new Schema({
         ref : 'User'
     },
     division : String,
+    status : String,
 },{timestamps : true});
 
 module.exports = mongoose.model('Employee', employeeSchema);

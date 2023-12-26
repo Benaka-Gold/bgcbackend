@@ -7,8 +7,8 @@ const createOrnament = async (data) => {
   return ornament;
 };
 
-const getOrnamentsByCustomerId = async (customerId) => {
-  return await Ornament.find({ customerId: customerId });
+const getOrnamentsByCustomerId = async (customerId,businessId) => {
+  return await Ornament.find({ customerId: customerId,businessId : businessId }).populate('purity');
 };
 
 const getOrnamentById = async (id) => {

@@ -11,8 +11,7 @@ const authRoutes = require('./src/routes/authRoutes');
 const passport = require('./src/config/passportConfig')
 require('dotenv').config();
 const fs = require('fs');
-
-
+const helmet = require('helmet')
 
 //Routes
 const userRoutes = require('./src/routes/userRoutes')
@@ -30,6 +29,8 @@ const customerRoutes = require('./src/routes/customerRoutes.js')
 const ornamentRoutes = require('./src/routes/ornamentRoutes.js')
 const divisionRoutes = require('./src/routes/divisionRoutes.js')
 const fundRoutes = require('./src/routes/fundRoutes.js')
+const goldRates = require('./src/routes/goldRateRoutes.js')
+const businessRoutes = require('./src/routes/businessRoutes.js')
 //End Routes
 
 const https = require('https');
@@ -44,13 +45,14 @@ httpsServer.listen(4000, () => {
 connectDB()
 app.use(bodyParser.json());
 app.use(cors())
+// app.use(helmet())
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/v1/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(errorHandler);
 app.use(passport.initialize());
 
 //App Router
-app.use('/', authRoutes);
+app.use('/api/v1', authRoutes);
 app.use('/api/v1',userRoutes);
 app.use('/api/v1',leadRoutes);
 app.use('/api/v1',teamTypeRoutes);
@@ -63,6 +65,9 @@ app.use('/api/v1',customerRoutes);
 app.use('/api/v1',ornamentRoutes);
 app.use('/api/v1',divisionRoutes);
 app.use('/api/v1',fundRoutes);
+app.use('/api/v1',goldRates);
+app.use('/api/v1',businessRoutes);
+
 //App Router End
 
 cron.schedule('0 * * * *', () => {

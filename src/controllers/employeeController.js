@@ -55,7 +55,7 @@ async function updateEmployee(req, res) {
 async function deleteEmployee(req, res) {
   try {
     const { teamId } = req.body; // Assume teamId is sent in the request body
-    const deletedEmployee = await employeeService.deleteEmployee(req.params.employeeId, teamId);
+    const deletedEmployee = await employeeService.deleteEmployee(req.params.id, teamId);
     res.status(200).json({sucess : true,deletedEmployee});
   } catch (error) {
     res.status(400).json({success :false, error: error.message });

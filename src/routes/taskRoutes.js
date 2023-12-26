@@ -143,6 +143,13 @@ router.put('/task/:id', ensureAuthenticated, taskController.updateTask);
  */
 router.delete('/task/:id', ensureAuthenticated, taskController.deleteTask);
 
-router.post('/task/by-status',ensureAuthenticated,checkRole(['MD','admin','operations','accounts']),taskController.getTasksByStatus);
+router.post('/task/by-status',ensureAuthenticated,checkRole(['MD','admin','operations','accounts','executive','compliance']),taskController.getTasksByStatus);
+
+router.get('/task/by-division',ensureAuthenticated,taskController.getTaskByDivision);
+
+router.get('/tasks/compliance-verification',ensureAuthenticated,taskController.complianceVerificationTasks)
+
+router.get('/tasks/compliance-verification/:id',ensureAuthenticated,taskController.complianceVerificationTaskData)
+
 
 module.exports = router;

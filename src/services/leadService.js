@@ -76,9 +76,14 @@ const getMoveLeads = async () => {
   }
 };
 
-const getLeadsByStatus = async (status) => {
+const getLeadsByStatus = async (req) => {
   try {
-    return await Lead.find({ status: status });
+    const {status} = req.params
+    if(req.user.role === 'MD' || 'admin')
+    {
+      return await Lead.find({ status: status});
+    }
+    return await Lead.find({ status: status,division : req.user.division  });
   } catch (error) {
     throw error;
   }

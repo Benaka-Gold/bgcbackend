@@ -1,8 +1,9 @@
 // src/routes/authRoutes.js
 const express = require('express');
 const authController = require('../controllers/authController');
+const { ensureAuthenticated } = require('../middleware/authMiddleware');
 const router = express.Router();
-
+const teamService = require('../services/teamService')
 /**
  * @swagger
  * /api/v1/auth/login:
@@ -10,7 +11,8 @@ const router = express.Router();
  *     summary: Login with phone number to receive OTP.
  *     tags: [Authentication]
  *     requestBody:
- *       required: true
+ *       required: 
+ * 
  *       content:
  *         application/json:
  *           schema:
@@ -23,7 +25,7 @@ const router = express.Router();
  *       200:
  *         description: OTP sent successfully.
  */
-router.post('/api/v1/auth/login', authController.login);
+router.post('/auth/login', authController.login);
 
 /**
  * @swagger
@@ -48,6 +50,18 @@ router.post('/api/v1/auth/login', authController.login);
  *       200:
  *         description: Login successful.
  */
-router.post('/api/v1/auth/verify-login', authController.verifyLogin);
+router.post('/auth/verify-login', authController.verifyLogin);
+
+router.get('/auth/getUserData',ensureAuthenticated,async (req,res)=>{
+    let teamMembers
+    if(req.user.teamId){
+        const team = await teamService.getTeamById(req.user.teamId)
+        teamMembers = team.members.filter(item => {
+          return item._id.toString() === req.user._id.toString();
+        })
+      }
+
+    res.status(200).json({user : req.user,team : teamMembers})
+})
 
 module.exports = router;

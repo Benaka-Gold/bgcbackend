@@ -4,9 +4,9 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController')
 const {ensureAuthenticated} = require('../middleware/authMiddleware')
+const teamController = require('../controllers/teamController')
 
-
-router.post('/user/create',ensureAuthenticated,userController.createUser)
+// router.post('/user/create',ensureAuthenticated,userController.createUser)
 /**
  * @swagger
  * /api/v1/users/{teamId}:
@@ -36,8 +36,6 @@ router.post('/user/create',ensureAuthenticated,userController.createUser)
  *         description: No users found for the specified team ID
  */
 router.get('/users/:teamId',ensureAuthenticated,userController.getUsersByTeam)
-
-router.get('/user/getUserData',ensureAuthenticated,(req,res)=>{res.status(200).json(req.user)})
 
 router.get('/user/:role',ensureAuthenticated,userController.getUserByRole)
 

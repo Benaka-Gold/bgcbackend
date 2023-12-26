@@ -19,9 +19,15 @@ const userSchema = new mongoose.Schema({
       required : true
     },
     teamId : {
-      type : mongoose.Schema.ObjectId,
+      type : mongoose.Schema.Types.ObjectId,
+      ref : 'Team',
       required : true
     },
+    division : {
+      type : mongoose.Schema.Types.ObjectId,
+      ref : 'Division',
+      required : false
+    }
   },{timestamps : true});
 
 module.exports = mongoose.model('User', userSchema);

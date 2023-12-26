@@ -9,8 +9,8 @@ exports.createEmployee = async (employeeData, createUser, userRole, teamId) => {
   let userId = null;
 
   // Transaction start
-  const session = await mongoose.startSession();
-  session.startTransaction();
+  // const session = await mongoose.startSession();
+  // session.startTransaction();
 
   try {
     // Create a user account for this employee if requested
@@ -19,9 +19,10 @@ exports.createEmployee = async (employeeData, createUser, userRole, teamId) => {
         empId: employeeData.empCode,
         phoneNumber: employeeData.phoneNumber,
         role: userRole,  // use the role sent from frontend
-        teamId : teamId
+        teamId : teamId,
+        name : employeeData.firstName
       });
-      await user.save({ session });
+      await user.save();
       userId = user._id;
     }
 
@@ -30,23 +31,17 @@ exports.createEmployee = async (employeeData, createUser, userRole, teamId) => {
       ...employeeData,
       userId: userId
     });
-    await employee.save({ session });
+    await employee.save();
 
     // Update the team members if a team ID is provided
     if (teamId) {
       await addMembers(teamId, userId);
     }
-
-    // Commit the transaction
-    await session.commitTransaction();
-    session.endSession();
-
     return employee;
 
   } catch (error) {
     // If an error occurs, abort the transaction and undo any changes
-    await session.abortTransaction();
-    session.endSession();
+    console.log(error)
     throw error;
   }
 };
@@ -84,26 +79,24 @@ exports.updateEmployee = async (empId, updatedData) => {
   };
 
   exports.deleteEmployee = async (employeeId, teamId) => {
-    // Transaction start
-    const session = await mongoose.startSession();
-    session.startTransaction();
-  
     try {
       // Find the employee
-      const employee = await Employee.findById(employeeId, null, { session });
+      const employee = await Employee.findById(employeeId, null);
+      console.log(employeeId)
       if (!employee) {
         throw new Error('Employee not found');
       }
   
       // Update employee status to 'fired'
       employee.status = 'fired';
-      await employee.save({ session });
+      await employee.save();
   
       // Delete the associated user account
       if (employee.userId) {
+
         await User.findByIdAndDelete(employee.userId);
       }
-  
+      
       // Remove employee from the team
       if (teamId) {
         const updatedTeam = await removeMembers(teamId, employee._id);
@@ -114,17 +107,11 @@ exports.updateEmployee = async (empId, updatedData) => {
           throw new Error('Failed to remove employee from the team');
         }
       }
-  
-      // Commit the transaction
-      await session.commitTransaction();
-      session.endSession();
-  
       return employee;  // return updated employee document
   
     } catch (error) {
       // If an error occurs, abort the transaction and undo any changes
-      await session.abortTransaction();
-      session.endSession();
+      console.error(error)
       throw error;
     }
   };

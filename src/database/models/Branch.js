@@ -41,6 +41,7 @@ const branchSchema = new mongoose.Schema({
     ref : 'Fund',
     default : null
   },
+  gst : String,
 });
 
 module.exports = mongoose.model('Branch', branchSchema);

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const Counter = require('./Counter')
 
 const customerSchema = new Schema({
   leadId : {
@@ -74,16 +75,30 @@ const customerSchema = new Schema({
     accountNumber : String,
     accountType : String
   },
+  customerImage : { type: Schema.Types.ObjectId, ref: 'FileUpload' },
   source: String,
   verificationRequired: Boolean,
   typesOfVerification: [String],
   verificationFeedback: String,
-  houseVerification :  { type: Schema.Types.ObjectId, ref: 'FileUpload' },
-  authorizationLetter: { type: Schema.Types.ObjectId, ref: 'FileUpload' },
-  noc: { type: Schema.Types.ObjectId, ref: 'FileUpload' },
-  agreementOfPurchase: { type: Schema.Types.ObjectId, ref: 'FileUpload' },
-  offerLetterOwnershipDeclaration: { type: Schema.Types.ObjectId, ref: 'FileUpload' },
-  otpVerification: Boolean,
+  businessId : [{type : Schema.Types.ObjectId,ref : 'Business'}],
+  c_id: { type: String, unique: true },
+});
+
+customerSchema.pre('save', async function(next) {
+  try {
+    const doc = this;
+    const counterDoc = await Counter.findByIdAndUpdate(
+      { _id: 'c_id' },
+      { $inc: { seq: 1 } },
+      { new: true, upsert: true }
+    );
+
+    const formattedId = counterDoc.seq.toString().padStart(5, '0'); 
+    doc.c_id = formattedId;
+    next();
+  } catch (error) {
+    next(error);
+  }
 });
 
 module.exports = mongoose.model('Customer', customerSchema);

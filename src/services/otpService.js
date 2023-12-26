@@ -4,7 +4,8 @@ const OTP = require('../database/models/OTP');
 
 exports.generateOtp = async (phoneNumber) => {
   const otp = otpGenerator.generate(6, { digits:true,specialChars : false,lowerCaseAlphabets : false,upperCaseAlphabets: false});
-  await OTP.create({ phoneNumber, otp });
+  const otpf = new OTP({ phoneNumber : phoneNumber, otp : otp })
+  otpf.save()
   // Send OTP via SMS (you'll need an SMS service for this)
   // ...
   return otp; 

@@ -6,7 +6,6 @@ const ExtractJwt = require('passport-jwt').ExtractJwt;
 const { verifyOtp } = require('../services/otpService');
 const User = require('../database/models/User');
 
-
 const jwtOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: process.env.JWT_SECRET,
@@ -41,7 +40,5 @@ passport.use(new LocalStrategy({
     return done(error);
   }
 }));
-
-
 
 module.exports = passport;

@@ -11,12 +11,10 @@ const transactionSchema = new mongoose.Schema({
   },
   relatedTo: {
     type: mongoose.Schema.Types.ObjectId,
-    required: true,
     refPath: 'onModel'
   },
   onModel: {
     type: String,
-    required: true,
   },
   details: {
     type: String,

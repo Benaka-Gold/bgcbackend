@@ -99,7 +99,7 @@ exports.getMoveLeads = async (req,res) => {
 
 exports.getLeadsByStatus = async (req,res) => {
   try {
-    const leads = await leadService.getLeadsByStatus(req.params.status)
+    const leads = await leadService.getLeadsByStatus(req)
     res.status(200).json({success : true,data : leads})
   } catch (error) {
     res.status(500).json({success : false,error : error})

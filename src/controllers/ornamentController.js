@@ -11,8 +11,9 @@ const createOrnament = async (req, res) => {
 
 const getOrnamentsByCustomerId = async (req, res) => {
   try {
-    const customerId = req.params.customerId;
-    const ornaments = await ornamentService.getOrnamentsByCustomerId(customerId);
+    const customerId = req.body.customerId;
+    const businessId = req.body.businessId;
+    const ornaments = await ornamentService.getOrnamentsByCustomerId(customerId,businessId);
     res.status(200).json(ornaments);
   } catch (error) {
     res.status(500).json({ message: error.message });

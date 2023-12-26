@@ -157,6 +157,10 @@ router.delete('/customers/:id', ensureAuthenticated, customerController.deleteCu
  */
 router.get('/customers/search', ensureAuthenticated, customerController.searchCustomers);
 
+router.get('/customer/verify-otp/:id',ensureAuthenticated,customerController.sendOTP)
+
+router.post('/customer/verify-otp',ensureAuthenticated,customerController.verifyOTP)
+
 module.exports = router;
 
 /**

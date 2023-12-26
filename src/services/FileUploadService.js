@@ -70,9 +70,7 @@ exports.generateDownloadLink = async (fileId) => {
 exports.deleteFile = async (fileId) => {
   const file = await FileUpload.findById(fileId);
   if (!file) throw new Error('File not found');
-
   const filePath = getFilePath(file.entityType, file.entityName, file.fileName);
-
   if (file.s3FilePath) {
     const params = {
       Bucket: 'your-bucket',
@@ -84,7 +82,6 @@ exports.deleteFile = async (fileId) => {
       if (err) console.error(err);
     });
   }
-
   await FileUpload.findByIdAndDelete(fileId);
   return true; // indicate success
 };
@@ -100,7 +97,6 @@ exports.updateFile = async (fileId, newFile, entityType, entityName, useS3 = fal
   const oldFilePath = getFilePath(file.entityType, file.entityName, file.fileName);
   const newFilePath = getFilePath(entityType, entityName, newFile.filename);
 
-  // Delete the old file
   if (file.s3FilePath) {
     const params = {
       Bucket: 'your-bucket',
@@ -141,4 +137,3 @@ exports.searchFiles = async (searchTerm, limit = 10, skip = 0) => {
   const regex = new RegExp(searchTerm, 'i');  // case-insensitive search
   return FileUpload.find({ fileName: regex }).limit(limit).skip(skip);
 };
-

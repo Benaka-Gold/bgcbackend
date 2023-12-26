@@ -17,7 +17,7 @@ const { ensureAuthenticated, checkRole } = require('../middleware/authMiddleware
  *       401:
  *         description: Unauthorized
  */
-router.get('/lead/getLeads',ensureAuthenticated,checkRole(['MD','admin','operations','hr','Telecaller']),leadController.getLeads)
+router.get('/lead/getLeads',ensureAuthenticated,checkRole(['MD','admin','operations','hr','Telecaller','compliance']),leadController.getLeads)
 
 /**
  * @swagger
@@ -64,7 +64,7 @@ router.get('/lead/getLeads',ensureAuthenticated,checkRole(['MD','admin','operati
  *       400:
  *         description: Bad Request
  */
-router.post('/lead/create',ensureAuthenticated,checkRole(['MD','admin','operations','hr','Telecaller']),leadController.createLead)
+router.post('/lead/create',ensureAuthenticated,checkRole(['MD','admin','operations','hr','Telecaller','compliance']),leadController.createLead)
 
 /**
  * @swagger
@@ -92,7 +92,7 @@ router.post('/lead/create',ensureAuthenticated,checkRole(['MD','admin','operatio
  *       400:
  *         description: Bad Request
  */
-router.post('/lead/getTeamLeads',ensureAuthenticated,checkRole(['MD','admin','operations','hr','Telecaller']),leadController.getLeadsByTeam)
+router.post('/lead/getTeamLeads',ensureAuthenticated,checkRole(['MD','admin','operations','hr','Telecaller','compliance']),leadController.getLeadsByTeam)
 
 /**
  * @swagger
@@ -120,7 +120,7 @@ router.post('/lead/getTeamLeads',ensureAuthenticated,checkRole(['MD','admin','op
  *       400:
  *         description: Bad Request
  */
-router.post('/lead/getLeadByUser',ensureAuthenticated,checkRole(['MD','admin','operations','hr','Telecaller']),leadController.getLeadByUser)
+router.post('/lead/getLeadByUser',ensureAuthenticated,checkRole(['MD','admin','operations','hr','Telecaller','compliance']),leadController.getLeadByUser)
 
 
 /**
@@ -151,7 +151,7 @@ router.post('/lead/getLeadByUser',ensureAuthenticated,checkRole(['MD','admin','o
  *             schema:
  *               $ref: '#/components/schemas/Lead'
  */
-router.put('/lead/update/:id', ensureAuthenticated, checkRole(['MD', 'HR','admin','Telecaller']), leadController.updateLead);
+router.put('/lead/update/:id', ensureAuthenticated, checkRole(['MD', 'HR','admin','Telecaller','compliance']), leadController.updateLead);
 
 /**
  * @swagger
@@ -185,7 +185,7 @@ router.put('/lead/update/:id', ensureAuthenticated, checkRole(['MD', 'HR','admin
  *         description: Internal Server Error
  */
 
-router.get('/lead/getFreshLeads/:teamId',ensureAuthenticated,checkRole(['MD','HR','admin','Telecaller']),leadController.getFreshLeads);
+router.get('/lead/getFreshLeads/:teamId',ensureAuthenticated,checkRole(['MD','HR','admin','Telecaller','compliance']),leadController.getFreshLeads);
 
 
 router.get('/lead/getMoveLeads',ensureAuthenticated,checkRole(['HR','admin']),leadController.getMoveLeads);

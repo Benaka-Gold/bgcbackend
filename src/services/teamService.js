@@ -1,5 +1,6 @@
 // src/services/teamService.js
 const Team = require('../database/models/Team');
+const mongoose = require('mongoose')
 
 const createTeam = async (data) => {
   const team = new Team(data);
@@ -36,7 +37,7 @@ const addMembers = async (teamId, members) => {
   try {
     // Ensure members is an array
     members = Array.isArray(members) ? members : [members];
-    members = members.map(member => mongoose.Types.ObjectId(member));
+    members = members.map(member => new mongoose.Types.ObjectId(member));
     const updatedTeam = await Team.findByIdAndUpdate(
       teamId,
       { $addToSet: { members: { $each: members } } },

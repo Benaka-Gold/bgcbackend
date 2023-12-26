@@ -52,7 +52,7 @@ router.post('/ornaments', ensureAuthenticated, ornamentController.createOrnament
  *     security:
  *       - bearerAuth: []
  */
-router.get('/ornaments/customer/:customerId', ensureAuthenticated, ornamentController.getOrnamentsByCustomerId);
+router.post('/ornaments/customer', ensureAuthenticated, ornamentController.getOrnamentsByCustomerId);
 
 /**
  * @swagger

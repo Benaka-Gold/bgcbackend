@@ -24,7 +24,7 @@ const taskSchema = new mongoose.Schema({
   status: {
     type: String,
     default: 'pending',
-    enum : ['pending','op_approval','ac_approval','cancelled','completed']
+    enum : ['op_verified','comp_approval','comp_approved','started','pending','op_approval','ac_approval','cancelled','completed']
   },
   // Additional details about the task
   description: String,
@@ -33,7 +33,19 @@ const taskSchema = new mongoose.Schema({
     required: false
   },
   weight : Number,
-  purity : String
+  purity : {
+    type : mongoose.Schema.Types.ObjectId,
+    ref : 'GoldRate'
+  },
+  division : {
+    type : mongoose.Schema.Types.ObjectId,
+    ref : 'Division'
+  },
+  businessId : {
+    type : mongoose.Schema.Types.ObjectId,
+    ref : 'Business'
+  },
+  state : Object
 }, { timestamps: true }); // Enable automatic timestamps for createdAt and updatedAt
 
 module.exports = mongoose.model('Task', taskSchema);

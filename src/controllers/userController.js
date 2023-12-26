@@ -60,6 +60,7 @@ exports.getUsersByTeam = async(req,res) => {
 exports.getUserByRole = async (req,res) => {
   try {
     const users = await userService.getUserByRole(req.params.role)
+    
     if(users.length === 0){
       return res.status(404).json({success : false,error : "No Users found in that role"})
     }

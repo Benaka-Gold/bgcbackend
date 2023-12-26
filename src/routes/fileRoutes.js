@@ -60,7 +60,7 @@ const upload = multer({ dest: 'uploads/' });
  *       500:
  *         description: Internal Server Error.
  */
-router.post('/upload',ensureAuthenticated,checkRole(['MD','HR','admin','operations','executive']), upload.single('file'), fileController.uploadFileController);
+router.post('/upload',ensureAuthenticated,checkRole(['MD','HR','admin','operations','executive','accounts','compliance']), upload.single('file'), fileController.uploadFileController);
 
 /**
  * @swagger
@@ -95,7 +95,7 @@ router.post('/upload',ensureAuthenticated,checkRole(['MD','HR','admin','operatio
  *         description: Internal Server Error.
  * 
  */
-router.get('/download/:fileId',ensureAuthenticated,checkRole(['MD','HR','admin','operations', 'executive']), fileController.downloadFileController);
+router.get('/download/:fileId',ensureAuthenticated,checkRole(['MD','HR','admin','operations', 'executive','accounts','compliance']), fileController.downloadFileController);
 
 /**
  * @swagger
@@ -125,7 +125,7 @@ router.get('/download/:fileId',ensureAuthenticated,checkRole(['MD','HR','admin',
  *         description: Internal Server Error.
  * 
  */
-router.delete('/file/:fileId',ensureAuthenticated,checkRole(['MD','HR','admin','operations', 'executive']), fileController.deleteFileController);
+router.delete('/file/:fileId',ensureAuthenticated,checkRole(['MD','HR','admin','operations', 'executive','compliance']), fileController.deleteFileController);
 
 /**
  * @swagger
@@ -146,7 +146,7 @@ router.delete('/file/:fileId',ensureAuthenticated,checkRole(['MD','HR','admin','
  *         description: Internal Server Error.
  * 
  */
-router.get('/files', fileController.listFilesController);
+router.get('/files',ensureAuthenticated, fileController.listFilesController);
 
 /**
  * @swagger
@@ -186,7 +186,7 @@ router.get('/files', fileController.listFilesController);
  *         description: Internal Server Error.
  * 
  */
-router.put('/update/:fileId',ensureAuthenticated,checkRole(['MD','HR','admin','operations','executive']), upload.single('file'), fileController.updateFileController);
+router.put('/update/:fileId',ensureAuthenticated,checkRole(['MD','HR','admin','operations','executive','compliance']), upload.single('file'), fileController.updateFileController);
 
 /**
  * @swagger
@@ -213,6 +213,6 @@ router.put('/update/:fileId',ensureAuthenticated,checkRole(['MD','HR','admin','o
  *       500:
  *         description: Internal Server Error.
  */
-router.get('/search',ensureAuthenticated,checkRole(['MD','HR','admin','operations']), fileController.searchFilesController);
+router.get('/search',ensureAuthenticated,checkRole(['MD','HR','admin','operations','compliance']), fileController.searchFilesController);
 
 module.exports = router;

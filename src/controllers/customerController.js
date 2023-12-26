@@ -1,5 +1,6 @@
 // src/controllers/customerController.js
-const customerService = require('../services/customerService');
+const customerService = require("../services/customerService");
+const otpService = require("../services/otpService");
 
 exports.createCustomer = async (req, res) => {
   try {
@@ -10,21 +11,20 @@ exports.createCustomer = async (req, res) => {
   }
 };
 
-exports.getCustomers = async (req,res) => {
-    try {
-        const customers = await customerService.getCustomers()
-        res.status(200).json({success : true,data : customers})
-    }
-    catch (error) {
-        res.status(500).json({success : false,error : error.message})
-    }
-}
+exports.getCustomers = async (req, res) => {
+  try {
+    const customers = await customerService.getCustomers();
+    res.status(200).json({ success: true, data: customers });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
 
 exports.getCustomerById = async (req, res) => {
   try {
     const customer = await customerService.getCustomerById(req.params.id);
     if (!customer) {
-      return res.status(404).json({ message: 'Customer not found' });
+      return res.status(404).json({ message: "Customer not found" });
     }
     res.json(customer);
   } catch (error) {
@@ -33,11 +33,13 @@ exports.getCustomerById = async (req, res) => {
 };
 
 exports.updateCustomer = async (req, res) => {
-  
   try {
-    const customer = await customerService.updateCustomer(req.params.id, req.body);
+    const customer = await customerService.updateCustomer(
+      req.params.id,
+      req.body
+    );
     if (!customer) {
-      return res.status(404).json({ message: 'Customer not found' });
+      return res.status(404).json({ message: "Customer not found" });
     }
     res.json(customer);
   } catch (error) {
@@ -49,9 +51,9 @@ exports.deleteCustomer = async (req, res) => {
   try {
     const success = await customerService.deleteCustomer(req.params.id);
     if (!success) {
-      return res.status(404).json({ message: 'Customer not found' });
+      return res.status(404).json({ message: "Customer not found" });
     }
-    res.json({ message: 'Customer deleted successfully' });
+    res.json({ message: "Customer deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -61,6 +63,31 @@ exports.searchCustomers = async (req, res) => {
   try {
     const customers = await customerService.findCustomers(req.query);
     res.json(customers);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.sendOTP = async (req, res) => {
+  try {
+    const customer = await customerService.getCustomerById(req.params.id);
+    const otp = await otpService.generateOtp(customer.phoneNumber);
+    res.status(200).json(otp);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.verifyOTP = async (req, res) => {
+  try {
+    const phoneNumber = req.body.phoneNumber;
+    const otp = req.body.otp;
+    const verification = await otpService.verifyOtp(phoneNumber, otp);
+    if (verification) {
+      res.status(200).json(true);
+    } else {
+      res.status(400).json(false);
+    }
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

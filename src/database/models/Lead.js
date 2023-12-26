@@ -15,13 +15,24 @@ const leadSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  purity : {
-    type : String,
-    required : false
+  // purity : {
+  //   type : mongoose.Schema.Types.ObjectId,
+  //   ref: 'GoldRate'
+  // },
+  // weight : {
+  //   type : Number,
+  //   required : false
+  // },
+  netWeight : {
+    type : Number
   },
-  weight : {
-    type : Number,
-    required : false
+  grossWeight : {
+    type : Number
+  },
+  goldType : {
+    type : String,
+    required : true,
+    enum : ['physical','release']
   },
   assignedTeam : {
     type : mongoose.Schema.Types.ObjectId,
@@ -59,8 +70,19 @@ const leadSchema = new mongoose.Schema({
     type : mongoose.Schema.Types.ObjectId,
     ref : 'Division',
     default : null
+  },
+  verified : {
+    type : Boolean,
+    default : false,
+  },
+  verifiedBy : {
+    type : mongoose.Schema.Types.ObjectId,
+    ref : 'User',
+    default : null,
+    required : function() {
+      return this.verified
+    }
   }
-  
 }, {
   timestamps: true  // This enables automatic updating of createdAt and updatedAt fields
 });
