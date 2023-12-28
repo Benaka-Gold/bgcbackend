@@ -45,23 +45,11 @@ const getTaskByDivision = async (division) => {
   return await Task.find({division : division}).populate('customerId businessId branchId').populate('assignedTo','name')
 }
 
-const complianceVerificationTasks = async(division) => {
-  try {
-    return await Task.find({status : 'op_approved',division : division})
-    .select('-state')
-    .populate('customerId','name')
-    .populate('assignedTo','name')
-    .populate({path : 'businessId',select : "netWeight grossWeight"})
-  } catch(error)
-  {
-    throw error;
-  }
-}
 
 const complianceVerificationTaskData = async(id) => {
   try{
     return await Task.findById(id)
-    .populate({path : 'leadId',populate : {path : 'assignedTo verifiedBy',select : 'name role'}})
+    .populate({path : 'leadId',populate : {path : 'assignedTo verifiedBy assignedTeam',select : 'name role'}})
     .populate({path : 'businessId',select : '-leadId -taskId -customerId',populate : {path : 'branchId',select : 'branchName'}})
     .populate('customerId')
     .populate('assignedTo','name');
@@ -79,6 +67,5 @@ module.exports = {
   getTaskByExecutive,
   getTasksByStatus,
   getTaskByDivision,
-  complianceVerificationTasks,
   complianceVerificationTaskData,
 };

@@ -51,7 +51,7 @@ const businessService = require('../services/businessService');
 const create = async (req, res) => {
   try {
     const lead = req.body.lead;
-    await updateLeadStatus(lead._id, "Assigned");
+    await updateLeadStatus(lead._id, "Assigned",req.user);
 
     const customer = await getOrCreateCustomer(lead);
     const taskData = createTaskData(req.body, lead, customer._id);
@@ -69,8 +69,8 @@ const create = async (req, res) => {
   }
 };
 
-async function updateLeadStatus(leadId, status) {
-  await leadService.updateLead(leadId, { status });
+async function updateLeadStatus(leadId, status,user) {
+  await leadService.updateLead(leadId, { status : status, verifiedBy : user._id});
 }
 
 async function getOrCreateCustomer(lead) {
@@ -199,15 +199,6 @@ const getTaskByDivision = async(req,res) => {
   }
 }
 
-const complianceVerificationTasks= async(req,res) => {
-  try{
-    const tasks = await taskService.complianceVerificationTasks(req.user.division)
-    res.status(200).json(tasks)
-  } catch(error) {
-    res.status(500).json({error : error.message})
-  }
-}
-
 const complianceVerificationTaskData = async(req,res) => {
   try{
     const taskData = await taskService.complianceVerificationTaskData(req.params.id)
@@ -226,6 +217,5 @@ module.exports = {
   getTaskByExecutive,
   getTasksByStatus,
   getTaskByDivision,
-  complianceVerificationTasks,
   complianceVerificationTaskData,
 };

@@ -4,8 +4,14 @@ const fs = require('fs');
 const path = require('path');
 const baseURL = process.env.BASE_URL || 'http://localhost:3000';
 
-aws.config.update({/* your AWS S3 config */});
-const s3 = new aws.S3();
+aws.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION
+});
+const s3 = new aws.S3({
+  Bucket : process.env.AWS_BUCKET_NAME
+});
 
 function getFilePath(entityType, entityName, fileName) {
   const folderPath = path.join('uploads', entityType, entityName);
@@ -29,6 +35,7 @@ exports.uploadFile = async (file, entityType, entityName, useS3 = false) => {
 
   if (useS3) {
     // S3 upload logic
+    
   } else {
     // Copy the file to the new location
     fs.copyFile(file.path, filePath, async (err) => {

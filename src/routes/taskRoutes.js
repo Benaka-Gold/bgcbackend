@@ -147,8 +147,6 @@ router.post('/task/by-status',ensureAuthenticated,checkRole(['MD','admin','opera
 
 router.get('/task/by-division',ensureAuthenticated,taskController.getTaskByDivision);
 
-router.get('/tasks/compliance-verification',ensureAuthenticated,taskController.complianceVerificationTasks)
-
 router.get('/tasks/compliance-verification/:id',ensureAuthenticated,taskController.complianceVerificationTaskData)
 
 
