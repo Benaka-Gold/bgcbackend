@@ -1,41 +1,55 @@
-const FileUpload = require('../database/models/FileUpload');
-const aws = require('aws-sdk');
-const fs = require('fs');
-const path = require('path');
-const baseURL = process.env.BASE_URL || 'http://localhost:3000';
+const FileUpload = require("../database/models/FileUpload");
+const aws = require("aws-sdk");
+const fs = require("fs");
+const path = require("path");
+const baseURL = process.env.BASE_URL || "http://localhost:3000";
 
 aws.config.update({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  region: process.env.AWS_REGION
+  region: process.env.AWS_REGION,
 });
 const s3 = new aws.S3({
-  Bucket : process.env.AWS_BUCKET_NAME
+  Bucket: process.env.AWS_BUCKET_NAME,
 });
 
 function getFilePath(entityType, entityName, fileName) {
-  const folderPath = path.join('uploads', entityType, entityName);
+  const folderPath = path.join("uploads", entityType, entityName);
   if (!fs.existsSync(folderPath)) {
     fs.mkdirSync(folderPath, { recursive: true });
   }
   return path.join(folderPath, fileName);
 }
 
-exports.uploadFile = async (file, entityType, entityName, useS3 = false) => {
+exports.uploadFile = async (file, entityType, entityName, useS3 = true) => {
   const filePath = getFilePath(entityType, entityName, file.filename);
-  
+
   const newFile = new FileUpload({
     fileName: file.filename,
     entityType,
     entityName,
     fileType: file.mimetype,
     localFilePath: useS3 ? null : filePath,
-    s3FilePath: useS3 ? `s3://your-bucket/${file.filename}` : null
+    s3FilePath: useS3
+      ? `s3://${process.env.AWS_BUCKET_NAME}/${file.filename}`
+      : null,
   });
 
   if (useS3) {
     // S3 upload logic
-    
+    const fileContent = fs.createReadStream(file.path);
+    const params = {
+      Bucket: process.env.AWS_BUCKET_NAME, 
+      Body: fileContent,
+    };
+    try {
+      const s3Response = await s3.upload(params).promise(); 
+      console.log(`File uploaded successfully at ${s3Response.Location}`);
+      newFile.s3FilePath = s3Response.Location; 
+    } catch (err) {
+      console.error("Error uploading file: ", err);
+      throw new Error("Error uploading file to S3");
+    }
   } else {
     // Copy the file to the new location
     fs.copyFile(file.path, filePath, async (err) => {
@@ -44,9 +58,9 @@ exports.uploadFile = async (file, entityType, entityName, useS3 = false) => {
       // Delete the original file after successful copy
       fs.unlink(file.path, (err) => {
         if (err) {
-          console.error('Error deleting the original file:', err);
+          console.error("Error deleting the original file:", err);
         } else {
-          console.log('Original file deleted successfully');
+          console.log("Original file deleted successfully");
         }
       });
     });
@@ -56,32 +70,35 @@ exports.uploadFile = async (file, entityType, entityName, useS3 = false) => {
   return newFile;
 };
 
-
 exports.generateDownloadLink = async (fileId) => {
   const file = await FileUpload.findById(fileId);
-  if (!file) throw new Error('File not found');
+  if (!file) throw new Error("File not found");
 
   if (file.s3FilePath) {
     const params = {
-      Bucket: 'your-bucket',
+      Bucket: "your-bucket",
       Key: file.fileName,
-      Expires: 60 // link expiration time in seconds
+      Expires: 60, // link expiration time in seconds
     };
-    return s3.getSignedUrlPromise('getObject', params);
+    return s3.getSignedUrlPromise("getObject", params);
   } else {
-    const filePath = getFilePath(file.entityType, file.entityName, file.fileName);
+    const filePath = getFilePath(
+      file.entityType,
+      file.entityName,
+      file.fileName
+    );
     return `${baseURL}/${filePath}`;
   }
 };
 
 exports.deleteFile = async (fileId) => {
   const file = await FileUpload.findById(fileId);
-  if (!file) throw new Error('File not found');
+  if (!file) throw new Error("File not found");
   const filePath = getFilePath(file.entityType, file.entityName, file.fileName);
   if (file.s3FilePath) {
     const params = {
-      Bucket: 'your-bucket',
-      Key: file.fileName
+      Bucket: "your-bucket",
+      Key: file.fileName,
     };
     await s3.deleteObject(params).promise();
   } else {
@@ -97,17 +114,27 @@ exports.listFiles = async (query = {}, limit = 10, skip = 0) => {
   return FileUpload.find(query).limit(limit).skip(skip);
 };
 
-exports.updateFile = async (fileId, newFile, entityType, entityName, useS3 = false) => {
+exports.updateFile = async (
+  fileId,
+  newFile,
+  entityType,
+  entityName,
+  useS3 = false
+) => {
   const file = await FileUpload.findById(fileId);
-  if (!file) throw new Error('File not found');
+  if (!file) throw new Error("File not found");
 
-  const oldFilePath = getFilePath(file.entityType, file.entityName, file.fileName);
+  const oldFilePath = getFilePath(
+    file.entityType,
+    file.entityName,
+    file.fileName
+  );
   const newFilePath = getFilePath(entityType, entityName, newFile.filename);
 
   if (file.s3FilePath) {
     const params = {
-      Bucket: 'your-bucket',
-      Key: file.fileName
+      Bucket: "your-bucket",
+      Key: file.fileName,
     };
     await s3.deleteObject(params).promise();
   } else {
@@ -125,9 +152,9 @@ exports.updateFile = async (fileId, newFile, entityType, entityName, useS3 = fal
 
   if (useS3) {
     const params = {
-      Bucket: 'your-bucket',
+      Bucket: "your-bucket",
       Key: newFile.filename,
-      Body: fs.createReadStream(newFile.path)
+      Body: fs.createReadStream(newFile.path),
     };
     await s3.upload(params).promise();
   } else {
@@ -141,6 +168,6 @@ exports.updateFile = async (fileId, newFile, entityType, entityName, useS3 = fal
 };
 
 exports.searchFiles = async (searchTerm, limit = 10, skip = 0) => {
-  const regex = new RegExp(searchTerm, 'i');  // case-insensitive search
+  const regex = new RegExp(searchTerm, "i"); // case-insensitive search
   return FileUpload.find({ fileName: regex }).limit(limit).skip(skip);
 };
