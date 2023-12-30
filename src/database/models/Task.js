@@ -24,7 +24,6 @@ const taskSchema = new mongoose.Schema({
   status: {
     type: String,
     default: 'pending',
-    enum : ['op_verified','comp_approval','comp_approved','started','pending','op_approval','ac_approval','cancelled','completed']
   },
   // Additional details about the task
   description: String,
@@ -32,7 +31,6 @@ const taskSchema = new mongoose.Schema({
     type: Date,
     required: false
   },
-  weight : Number,
   purity : {
     type : mongoose.Schema.Types.ObjectId,
     ref : 'GoldRate'

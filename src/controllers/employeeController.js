@@ -7,6 +7,7 @@ async function createEmployee(req, res) {
     const employeeData = {
         firstName : req.body.firstName,
         lastName : req.body.lastName,
+        fatherName : req.body.fatherName,
         empCode : req.body.empCode,
         email : req.body.email,
         phoneNumber : req.body.phoneNumber,
@@ -14,13 +15,16 @@ async function createEmployee(req, res) {
         address : req.body.address,
         position : req.body.position,
         department : req.body.department,
+        dateOfBirth : req.body.dateOfBirth,
         dateHired : req.body.dateHired,
-        documents : req.body.documents
+        documents : req.body.documents,
+        division : req.body.division,
+        team : req.body.team
     }
     const newEmployee = await employeeService.createEmployee(employeeData,createUser,req.body.role,req.body.teamId);
     res.status(200).json({success : true,data : newEmployee});
   } catch (error) {
-    res.status(400).json({success : false,error: error.message });
+    res.status(500).json({message: error.message });
   }
 }
 

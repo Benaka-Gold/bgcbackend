@@ -1,4 +1,5 @@
 // src/controllers/customerController.js
+const { default: axios } = require("axios");
 const customerService = require("../services/customerService");
 const otpService = require("../services/otpService");
 
@@ -72,7 +73,17 @@ exports.sendOTP = async (req, res) => {
   try {
     const customer = await customerService.getCustomerById(req.params.id);
     const otp = await otpService.generateOtp(customer.phoneNumber);
-    res.status(200).json(otp);
+    await axios.get(
+      `https://pgapi.vispl.in/fe/api/v1/send?username=benakagold.trans&password=hhwGK&unicode=false&from=BENGLD&to=${customer.phoneNumber}&text=Thanks%20for%20choosing%20our%20service.%20The%20one%20time%20password%20to%20share%20with%20our%20executive%20is%20%${otp}.%20This%20OTP%20is%20valid%20for%205%20minutes%20only.%20Visit%20us%20www.benakagoldcompany.com%20Call%20us%206366111999.&dltContentId=1707168542372603038`)
+      .then(data => {
+          if(data.data.statusCode === 200){
+            res.status(200).json({message: 'OTP sent successfully.'} );
+          }
+          else {
+            res.status(401).json({message : "OTP Not successfull"})
+          }
+        })
+    // res.status(200).json(otp);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

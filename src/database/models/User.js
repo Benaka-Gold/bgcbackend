@@ -9,6 +9,7 @@ const userSchema = new mongoose.Schema({
     trim: true,
     uppercase: true
   },
+  name : String,
   phoneNumber: {
     type: String,
     required: true,

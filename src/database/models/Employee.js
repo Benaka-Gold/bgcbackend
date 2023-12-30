@@ -38,6 +38,7 @@ const employeeSchema = new Schema({
         type: Date,
         required: true
     },
+    team : {type : mongoose.Schema.Types.ObjectId,ref : 'Team', default : null},
     address: {
         street: String,
         city: String,

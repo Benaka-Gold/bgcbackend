@@ -6,8 +6,18 @@ const createBusiness = async (data) => {
 };
 
 const getAllBusinesses = async () => {
-    return await Business.find().populate('taskId leadId customerId transactionId');
+    return await Business.find()
+    .populate({path : 'leadId',populate : {path : 'assignedTo',select : 'name'}})
+    .populate('customerId')
+    .populate({path : 'taskId', populate : {path : 'assignedTo',select : 'name'}});
 };
+
+const getTodayBusinesses = async() => {
+    return await Business.find()
+    .populate({path : 'leadId',populate : {path : 'assignedTo',select : 'name'}})
+    .populate('customerId')
+    .populate({path : 'taskId', populate : {path : 'assignedTo',select : 'name'}});
+}
 
 const getBusinessById = async (id) => {
     const business =  await Business.findById(id)
@@ -16,9 +26,9 @@ const getBusinessById = async (id) => {
 
 const updateBusiness = async (id, data) => {
     try {
-        if(data.status === 'op_approved') {
+        if(data.status === 'acc_purchase_approved') {
         const business = await Business.findById(id)
-        business.serviceAmount = (business.grossAmount + business.releasingAmount) * 0.03
+        // business.serviceAmount = (business.grossAmount + business.releasingAmount) * 0.03
         business.totalAmount = business.grossAmount - (business.releasingAmount + business.serviceAmount)
         business.status = "Finished"
         business.save()

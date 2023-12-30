@@ -7,11 +7,11 @@ const fileUploadSchema = new mongoose.Schema({
   },
   entityType: { // New field to store the type of entity (e.g., 'employee', 'customer')
     type: String,
-    required: true
+    // required: true
   },
   entityName: { // New field to store the name of the entity
     type: String,
-    required: true
+    // required: true
   },
   localFilePath: String,
   s3FilePath: String,

@@ -151,7 +151,7 @@ router.post('/lead/getLeadByUser',ensureAuthenticated,checkRole(['MD','admin','o
  *             schema:
  *               $ref: '#/components/schemas/Lead'
  */
-router.put('/lead/update/:id', ensureAuthenticated, checkRole(['MD', 'HR','admin','Telecaller','compliance']), leadController.updateLead);
+router.put('/lead/update/:id', ensureAuthenticated, checkRole(['MD', 'HR','admin','Telecaller','compliance','accounts', 'executive']), leadController.updateLead);
 
 /**
  * @swagger

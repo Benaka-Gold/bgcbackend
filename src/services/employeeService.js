@@ -20,7 +20,8 @@ exports.createEmployee = async (employeeData, createUser, userRole, teamId) => {
         phoneNumber: employeeData.phoneNumber,
         role: userRole,  // use the role sent from frontend
         teamId : teamId,
-        name : employeeData.firstName
+        name : employeeData.firstName,
+        division : employeeData.division
       });
       await user.save();
       userId = user._id;
