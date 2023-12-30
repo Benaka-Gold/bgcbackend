@@ -74,7 +74,7 @@ exports.sendOTP = async (req, res) => {
     const customer = await customerService.getCustomerById(req.params.id);
     const otp = await otpService.generateOtp(customer.phoneNumber);
     await axios.get(
-      `https://pgapi.vispl.in/fe/api/v1/send?username=benakagold.trans&password=hhwGK&unicode=false&from=BENGLD&to=${customer.phoneNumber}&text=Thanks%20for%20choosing%20our%20service.%20The%20one%20time%20password%20to%20share%20with%20our%20executive%20is%20%${otp}.%20This%20OTP%20is%20valid%20for%205%20minutes%20only.%20Visit%20us%20www.benakagoldcompany.com%20Call%20us%206366111999.&dltContentId=1707168542372603038`)
+      `https://pgapi.vispl.in/fe/api/v1/send?username=benakagold.trans&password=hhwGK&unicode=false&from=BENGLD&to=${customer.phoneNumber}&text=Thanks%20for%20choosing%20our%20service.%20The%20one%20time%20password%20to%20share%20with%20our%20executive%20is%20${otp}.%20This%20OTP%20is%20valid%20for%205%20minutes%20only.%20Visit%20us%20www.benakagoldcompany.com%20Call%20us%206366111999.&dltContentId=1707168542372603038`)
       .then(data => {
           if(data.data.statusCode === 200){
             res.status(200).json({message: 'OTP sent successfully.'} );
