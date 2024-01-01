@@ -46,6 +46,9 @@ const getTaskByExecutive = async (id) => {
     assignedTo: id,
     $or: [
       { status: { $ne: 'Finished' } }, // Select tasks that are not 'Finished'
+      {status : {$ne : 'purchase_acc_approved'}},
+      {status : {$ne : 'purchase_payment_done'}},
+      {status : {$ne : 'cancel_approved'}},
       { 
         status: 'Finished',
         // Select 'Finished' tasks only if they are from today
