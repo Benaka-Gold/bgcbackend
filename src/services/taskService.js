@@ -38,8 +38,22 @@ const getTasksByStatus = async (data) => {
 }
 
 const getTaskByExecutive = async (id) => {
-  return await Task.find({assignedTo : id}).populate('customerId')
-}
+  // Get today's date at midnight to compare against task date
+  let today = new Date();
+  today.setHours(0, 0, 0, 0); // Set time to 00:00:00 for today
+
+  return await Task.find({
+    assignedTo: id,
+    $or: [
+      { status: { $ne: 'Finished' } }, // Select tasks that are not 'Finished'
+      { 
+        status: 'Finished',
+        // Select 'Finished' tasks only if they are from today
+        updatedAt: { $gte: today } 
+      }
+    ]
+  }).populate('customerId');
+} 
 
 const getTaskByDivision = async (division) => {
   return await Task.find({division : division}).populate('customerId businessId branchId').populate('assignedTo','name')
