@@ -1,16 +1,18 @@
-const FileUpload = require("../database/models/FileUpload");
-const aws = require("aws-sdk");
+// Import necessary AWS SDK v3 packages
+const { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = require("@aws-sdk/client-s3");
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const fs = require("fs");
 const path = require("path");
+const FileUpload = require("../database/models/FileUpload");
 const baseURL = process.env.BASE_URL || "http://localhost:3000";
 
-aws.config.update({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+// Initialize the S3 client
+const s3Client = new S3Client({
   region: process.env.AWS_REGION,
-});
-const s3 = new aws.S3({
-  Bucket: process.env.AWS_BUCKET_NAME,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
 });
 
 function getFilePath(entityType, entityName, fileName) {
@@ -35,27 +37,31 @@ exports.uploadFile = async (file, entityType, entityName, useS3 = true) => {
   });
 
   if (useS3) {
-    // S3 upload logic
-    const fileContent = fs.createReadStream(file.path);
-    const params = {
+    const fileStream = fs.createReadStream(file.path);
+    const uploadParams = {
       Bucket: process.env.AWS_BUCKET_NAME, 
-      Body: fileContent,
-      Key : filePath
+      Body: fileStream,
+      Key: filePath
     };
+
     try {
-      const s3Response = await s3.upload(params).promise(); 
-      console.log(`File uploaded successfully at ${s3Response.Location}`);
-      newFile.s3FilePath = s3Response.Location; 
+      console.log("Uploading")
+      const s3Response = await s3Client.send(new PutObjectCommand(uploadParams));
+      if(!s3Response.$metadata.httpStatusCode === 200){
+        throw new Error('Could not upload file to S3')
+      }
+      const fileUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`;
+      // console.log(`File uploaded successfully at ${s3Response.Location}`);
+      newFile.s3FilePath = fileUrl;
       fs.unlink(file.path, (err) => {
         if (err) {
           console.error("Error deleting the original file:", err);
         } else {
           console.log("Original file deleted successfully");
         }
-      })
-      const folder = path.join('uploads',entityType,entityName)
-      fs.rmdirSync(folder,{recursive : true,force : true})
-      // fs.rmdirSync(`uploads/${entityType}`)
+      });
+      const folder = path.join('uploads', entityType, entityName)
+      fs.rmdirSync(folder, { recursive: true, force: true });
     } catch (err) {
       console.error("Error uploading file: ", err);
     }
@@ -82,41 +88,35 @@ exports.uploadFile = async (file, entityType, entityName, useS3 = true) => {
 exports.generateDownloadLink = async (fileId) => {
   const file = await FileUpload.findById(fileId);
   if (!file) throw new Error("File not found");
-  const filePath = getFilePath(
-    file.entityType,
-    file.entityName,
-    file.fileName
-  );
+  const filePath = getFilePath(file.entityType, file.entityName, file.fileName);
 
   if (file.s3FilePath) {
-    const params = {
-      Bucket: "bgcdata",
+    const downloadParams = {
+      Bucket: process.env.AWS_BUCKET_NAME,
       Key: filePath,
       Expires: 300, // link expiration time in seconds
     };
-    return s3.getSignedUrlPromise("getObject", params);
+    return getSignedUrl(s3Client, new GetObjectCommand(downloadParams));
   } else {
-    
     return `${baseURL}/${filePath}`;
   }
 };
 
 exports.deleteFile = async (fileId) => {
-
   const file = await FileUpload.findById(fileId);
 
   if (!file) throw new Error("File not found");
   const filePath = getFilePath(file.entityType, file.entityName, file.fileName);
 
   if (file.s3FilePath) {
-    const params = {
-      Bucket : process.env.AWS_BUCKET_NAME,
-      Key : filePath,
-    }
-    try{
-      await s3.deleteObject(params).promise();
-    } catch(error) {
-      console.log(error)
+    const deleteParams = {
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: filePath,
+    };
+    try {
+      await s3Client.send(new DeleteObjectCommand(deleteParams));
+    } catch (error) {
+      console.error(error);
       throw error;
     }
   } else {
@@ -124,7 +124,7 @@ exports.deleteFile = async (fileId) => {
       if (err) console.error(err);
     });
   }
- 
+
   await FileUpload.findByIdAndDelete(fileId);
   return true; // indicate success
 };
@@ -143,22 +143,18 @@ exports.updateFile = async (
   const file = await FileUpload.findById(fileId);
   if (!file) throw new Error("File not found");
 
-  const oldFilePath = getFilePath(
-    file.entityType,
-    file.entityName,
-    file.fileName
-  );
+  const oldFilePath = getFilePath(file.entityType, file.entityName, file.fileName);
   const newFilePath = getFilePath(entityType, entityName, newFile.filename);
 
   if (file.s3FilePath) {
-    const params = {
-      Bucket: "bgcdata",
-      Key: file.fileName,
+    const deleteParams = {
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: oldFilePath,
     };
     try {
-      await s3.deleteObject(params).promise();
-    } catch(error) {
-      console.log(error)
+      await s3Client.send(new DeleteObjectCommand(deleteParams));
+    } catch (error) {
+      console.error(error);
     }
   } else {
     fs.unlink(oldFilePath, (err) => {
@@ -171,15 +167,15 @@ exports.updateFile = async (
   file.entityName = entityName;
   file.fileType = newFile.mimetype;
   file.localFilePath = useS3 ? null : newFilePath;
-  file.s3FilePath = useS3 ? `s3://bgc/${newFile.filename}` : null;
+  file.s3FilePath = useS3 ? `s3://${process.env.AWS_BUCKET_NAME}/${newFilePath}` : null;
 
   if (useS3) {
-    const params = {
-      Bucket: "your-bucket",
-      Key: newFile.filename,
+    const uploadParams = {
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: newFilePath,
       Body: fs.createReadStream(newFile.path),
     };
-    await s3.upload(params).promise();
+    await s3Client.send(new PutObjectCommand(uploadParams));
   } else {
     fs.copyFile(newFile.path, newFilePath, (err) => {
       if (err) throw err;
