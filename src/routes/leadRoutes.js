@@ -16,7 +16,7 @@ const { ensureAuthenticated, checkRole } = require('../middleware/authMiddleware
  *         description: Successful response
  *       401:
  *         description: Unauthorized
- */
+ */ 
 router.get('/lead/getLeads',ensureAuthenticated,checkRole(['MD','admin','operations','hr','Telecaller','compliance']),leadController.getLeads)
 
 /**
