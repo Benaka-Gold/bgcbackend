@@ -33,14 +33,14 @@ const goldRates = require('./src/routes/goldRateRoutes.js')
 const businessRoutes = require('./src/routes/businessRoutes.js')
 //End Routes
 
-// const https = require('https');
-// const privateKey = fs.readFileSync('../server.key', 'utf8');
-// const certificate = fs.readFileSync('../server.cert', 'utf8');
-// const credentials = { key: privateKey, cert: certificate };
-// const httpsServer = https.createServer(credentials, app);
-// httpsServer.listen(4000, () => {
-//   console.log(`HTTPS Server running on port 4000`);
-// });
+const https = require('https');
+const privateKey = fs.readFileSync('../server.key', 'utf8');
+const certificate = fs.readFileSync('../server.cert', 'utf8');
+const credentials = { key: privateKey, cert: certificate };
+const httpsServer = https.createServer(credentials, app);
+httpsServer.listen(4000, () => {
+  console.log(`HTTPS Server running on port 4000`);
+});
 
 connectDB()
 app.use(bodyParser.json());
@@ -74,7 +74,7 @@ cron.schedule('0 * * * *', () => {
   console.log('Running daily cleanup task');
   cleanupOrphanedFiles();
 });
-const PORT = process.env.PORT || 3000
-app.listen(PORT, () => {
-  console.log('Server is running on port 4000');
-});
+// const PORT = process.env.PORT || 3000
+// app.listen(PORT, () => {
+//   console.log('Server is running on port 4000');
+// });

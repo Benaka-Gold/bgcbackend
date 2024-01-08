@@ -5,7 +5,6 @@ const userSchema = new mongoose.Schema({
   empId: {
     type: String,
     required: true,
-    unique: true,
     trim: true,
     uppercase: true
   },

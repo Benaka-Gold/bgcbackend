@@ -5,7 +5,7 @@ const fs = require("fs");
 const path = require("path");
 const FileUpload = require("../database/models/FileUpload");
 const baseURL = process.env.BASE_URL || "http://localhost:3000";
-
+// const { getSignedUrl } = require('@aws-sdk/cloudfront-signer');
 // Initialize the S3 client
 const s3Client = new S3Client({
   region: process.env.AWS_REGION,
@@ -101,6 +101,34 @@ exports.generateDownloadLink = async (fileId) => {
     return `${baseURL}/${filePath}`;
   }
 };
+
+
+const privateKey = fs.readFileSync('/root/bgcBackend/src/utils/pk-APKARN4BD7SIMVSGVEQG.pem', 'utf8');
+
+//  exports.generateDownloadLink = async (fileId) => {
+//   const file = await FileUpload.findById(fileId);
+//   if (!file) throw new Error("File not found");
+//   const filePath = getFilePath(file.entityType, file.entityName, file.fileName);
+  
+//   if (file.s3FilePath) {
+//     const urlToSign = `${process.env.CLOUDFRONT_DOMAIN}/${filePath}`;
+//     const dateLessThan = Math.floor(Date.now() / 1000) + 300 * 60; // Unix timestamp
+//     const signInput = {
+//       url: urlToSign,
+//       keyPairId: process.env.CLOUDFRONT_KEY_PAIR_ID,
+//       privateKey: privateKey,
+//       dateLessThan: new Date(dateLessThan * 1000), // Convert Unix timestamp back to ISO for the function
+//     };
+//     try {
+//       const signedUrl = getSignedUrl(signInput);
+//       return signedUrl;
+//     } catch (error){
+//      console.log(error.message)
+//     }
+//   } else {
+//     return `${baseURL}/${filePath}`;
+//   }
+// };
 
 exports.deleteFile = async (fileId) => {
   const file = await FileUpload.findById(fileId);

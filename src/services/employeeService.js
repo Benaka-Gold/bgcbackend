@@ -36,7 +36,7 @@ exports.createEmployee = async (employeeData, createUser, userRole, teamId) => {
 
     // Update the team members if a team ID is provided
     if (teamId) {
-      await addMembers(teamId, userId);
+      await addMembers(teamId, {_id : userId,isTL : (employeeData.isTL) ? true : false});
     }
     return employee;
 
@@ -58,9 +58,11 @@ exports.getEmployee = async (id) => {
 
   exports.getEmployees = async()=>{
     try{
-        const employees = await Employee.find().select({'firstName' : 1,'lastName' : 1,'empCode' : 1,'phoneNumber' : 1,"email" : 1})
+        const employees = await Employee.find().select({'firstName' : 1,'lastName' : 1,'empCode' : 1,'phoneNumber' : 1,"email" : 1,"status" : 1})
         return employees
     }
+
+    
     catch(error){
         throw error;
     }
@@ -68,11 +70,7 @@ exports.getEmployee = async (id) => {
 
 exports.updateEmployee = async (empId, updatedData) => {
     try {
-      const updatedEmployee = await Employee.findOneAndUpdate(
-        { empCode: empId },
-        { $set: updatedData },
-        { new: true }
-      );
+      const updatedEmployee = await Employee.findByIdAndUpdate(empId,updatedData,{ new: true });
       return updatedEmployee;
     } catch (error) {
       throw error;

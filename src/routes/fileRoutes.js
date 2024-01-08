@@ -125,7 +125,7 @@ router.get('/download/:fileId',ensureAuthenticated,checkRole(['MD','HR','admin',
  *         description: Internal Server Error.
  * 
  */
-router.delete('/file/:fileId',ensureAuthenticated,checkRole(['MD','HR','admin','operations', 'executive','compliance']), fileController.deleteFileController);
+router.delete('/file/:fileId',ensureAuthenticated,checkRole(['MD','HR','admin','operations', 'executive','compliance','accounts']), fileController.deleteFileController);
 
 /**
  * @swagger

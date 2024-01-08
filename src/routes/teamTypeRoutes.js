@@ -28,7 +28,7 @@ const { ensureAuthenticated, checkRole } = require('../middleware/authMiddleware
  *               items:
  *                 $ref: '#/components/schemas/TeamType'
  */
-router.get('/team-types', ensureAuthenticated, checkRole(['MD','admin','hr','operations']), teamTypeController.getTeamTypes);
+router.get('/team-types', ensureAuthenticated, teamTypeController.getTeamTypes);
 
 /**
  * @swagger

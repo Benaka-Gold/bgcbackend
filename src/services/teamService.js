@@ -36,8 +36,11 @@ const deleteTeam = async (id) => {
 const addMembers = async (teamId, members) => {
   try {
     // Ensure members is an array
+    console.log(members)
     members = Array.isArray(members) ? members : [members];
-    members = members.map(member => new mongoose.Types.ObjectId(member));
+    members = members.map(member => {
+      return {_id : new mongoose.Types.ObjectId(member._id),isTL : member.isTL}
+    });
     const updatedTeam = await Team.findByIdAndUpdate(
       teamId,
       { $addToSet: { members: { $each: members } } },

@@ -143,7 +143,7 @@ router.put('/task/:id', ensureAuthenticated, taskController.updateTask);
  */
 router.delete('/task/:id', ensureAuthenticated, taskController.deleteTask);
 
-router.post('/task/by-status',ensureAuthenticated,checkRole(['MD','admin','operations','accounts','executive','compliance']),taskController.getTasksByStatus);
+router.post('/task/by-status',ensureAuthenticated,taskController.getTasksByStatus);
 
 router.get('/task/by-division',ensureAuthenticated,taskController.getTaskByDivision);
 

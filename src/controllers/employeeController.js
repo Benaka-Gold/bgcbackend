@@ -19,7 +19,8 @@ async function createEmployee(req, res) {
         dateHired : req.body.dateHired,
         documents : req.body.documents,
         division : req.body.division,
-        team : req.body.team
+        team : req.body.team,
+        isTL : req.body.isTL
     }
     const newEmployee = await employeeService.createEmployee(employeeData,createUser,req.body.role,req.body.teamId);
     res.status(200).json({success : true,data : newEmployee});
@@ -49,7 +50,7 @@ async function getEmployees(req, res) {
 
 async function updateEmployee(req, res) {
   try {
-    const updatedEmployee = await employeeService.updateEmployee(req.params.empId, req.body);
+    const updatedEmployee = await employeeService.updateEmployee(req.params.id, req.body);
     res.status(200).json({success : true,data : updatedEmployee});
   } catch (error) {
     res.status(500).json({success : false, error: error.message });

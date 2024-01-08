@@ -8,7 +8,7 @@ const createBusiness = async (data) => {
 const getAllBusinesses = async () => {
     return await Business.find()
     .populate({path : 'leadId',populate : {path : 'assignedTo',select : 'name'}})
-    .populate('customerId')
+    .populate('customerId division')
     .populate({path : 'taskId', populate : {path : 'assignedTo',select : 'name'}});
 };
 

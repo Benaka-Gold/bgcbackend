@@ -81,7 +81,7 @@ const getLeadsByStatus = async (req) => {
     const {status} = req.params
     if(req.user.role === 'MD' || 'admin')
     {
-      return await Lead.find({ status: status});
+      return await Lead.find({ status: status}).populate('assignedTo assignedTeam','name');
     }
     return await Lead.find({ status: status,division : req.user.division  });
   } catch (error) {
